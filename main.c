@@ -44,8 +44,9 @@ float calcularConsumoPeriodo(int meses[], int anos[], float consumos[], int n, i
 // retorna o id da unidade com maior consumo total; no empate, o menor id
 int encontrarUnidadeMaiorConsumo(int unidadeIds[], float consumos[], int n);
 
+// troca as leituras das posicoes a e b, movendo todos os arrays paralelos juntos
 void trocarItensLeitura(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
-                        int j);
+                        int a, int b);
 
 int carregarUnidades(const char nomeArquivo[], int unidadeIds[], char descricoes[][50], int max) {
 
@@ -84,7 +85,8 @@ int carregarLeituras(const char nomeArquivo[], int ids[], int unidadeIds[], int 
                                  &meses[lidos], &anos[lidos], &consumos[lidos]) == 5) {
         lidos++;
     }
-    Fsele fclose(arquivo);
+
+    fclose(arquivo);
 
     printf("== Leituras carregadas com sucesso! == \n");
 
@@ -123,18 +125,19 @@ int buscaBinaria(int ids[], int n, int idProcurado) {
 void bubbleSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
                             int n) {
 
-    bool ordenado = true;
-
     for (int i = 1; i < n; i++) {
+        bool ordenado = true;
         for (int j = 0; j < n - i; j++) {
             if (ids[j] > ids[j + 1]) {
-                trocarItensLeitura(ids, unidadeIds, meses, anos, consumos, j);
+                trocarItensLeitura(ids, unidadeIds, meses, anos, consumos, j, j + 1);
                 ordenado = false;
             }
         }
 
         if (ordenado) {
-            printf("Array já ordenado O(n)");
+            if (i == 1) {
+                printf("Array já ordenado O(n)\n");
+            }
             return;
         }
     }
@@ -144,63 +147,130 @@ void bubbleSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[]
           printf("| %d | %d | %d | %d | %.2f | \n", ids[k], unidadeIds[k], meses[k], anos[k],
                  consumos[k]);
       }
-  } */
+                 */
+}
 
-    void trocarItensLeitura(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
-                            int j) {
-        int tempId = ids[j];
-        int tempUnidadesIds = unidadeIds[j];
-        int tempMeses = meses[j];
-        int tempAnos = anos[j];
-        float tempConsumos = consumos[j];
+void selectionSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[],
+                               float consumos[], int n) {
 
-        ids[j] = ids[j + 1];
-        ids[j + 1] = tempId;
-
-        unidadeIds[j] = unidadeIds[j + 1];
-        unidadeIds[j + 1] = tempUnidadesIds;
-
-        meses[j] = meses[j + 1];
-        meses[j + 1] = tempMeses;
-
-        anos[j] = anos[j + 1];
-        anos[j + 1] = tempAnos;
-
-        consumos[j] = consumos[j + 1];
-        consumos[j + 1] = tempConsumos;
+    for (int i = 0; i < n - 1; i++) {
+        int min = i;
+        for (int j = i + 1; j < n; j++) {
+            if (ids[j] < ids[min]) {
+                min = j;
+            }
+        }
+        if (min != i) {
+            trocarItensLeitura(ids, unidadeIds, meses, anos, consumos, i, min);
+        }
     }
 
-    int main() {
-        char arquivo_leitura[] = "leituras.txt";
-        char arquivo_unidades[] = "unidades.csv";
+    /* for (int k = 0; k < n; k++) {
+        printf("| %d | %d | %d | %d | %.2f | \n", ids[k], unidadeIds[k], meses[k], anos[k],
+               consumos[k]);
+    } */
+}
 
-        // dados das unidades, acessar com i
-        int unidadeIdsCatalogo[MAX];
-        char descricoes[MAX][50];
+void insertionSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[],
+                               float consumos[], int n) {
 
-        // dados de consumo, acessar com j
-        int ids[MAX];
-        int unidadeIds[MAX];
-        int meses[MAX];
-        int anos[MAX];
-        float consumos[MAX];
+    for (int i = 1; i < n; i++) {
 
-        int totalUnidades = carregarUnidades(arquivo_unidades, unidadeIdsCatalogo, descricoes, MAX);
+        // guarda a leitura inteira da posicao i
+        int elementoId = ids[i];
+        int elementoUnidade = unidadeIds[i];
+        int elementoMes = meses[i];
+        int elementoAno = anos[i];
+        float elementoConsumo = consumos[i];
 
-        if (totalUnidades == -1) {
-            printf("Erro ao abrir o arquivo unidades.csv.\nEncerrando o programa.\n");
-            return 1;
+        int j = i - 1;
+        bool encontrou = false;
+
+        while (j >= 0 && !encontrou) {
+            if (ids[j] > elementoId) {
+
+                ids[j + 1] = ids[j];
+                unidadeIds[j + 1] = unidadeIds[j];
+                meses[j + 1] = meses[j];
+                anos[j + 1] = anos[j];
+                consumos[j + 1] = consumos[j];
+
+                j--;
+            } else {
+                encontrou = true;
+            }
         }
 
-        int totalLeituras =
-            carregarLeituras(arquivo_leitura, ids, unidadeIds, meses, anos, consumos, MAX);
-
-        if (totalLeituras == -1) {
-            printf("Erro ao abrir o arquivo leituras.txt.\nEncerrando o programa.\n");
-            return 1;
-        }
-
-        bubbleSortLeituraPorId(ids, unidadeIds, meses, anos, consumos, 50);
-
-        return 0;
+        ids[j + 1] = elementoId;
+        unidadeIds[j + 1] = elementoUnidade;
+        meses[j + 1] = elementoMes;
+        anos[j + 1] = elementoAno;
+        consumos[j + 1] = elementoConsumo;
     }
+
+    for (int k = 0; k < n; k++) {
+        printf("| %d | %d | %d | %d | %.2f | \n", ids[k], unidadeIds[k], meses[k], anos[k],
+               consumos[k]);
+    }
+}
+
+void trocarItensLeitura(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
+                        int a, int b) {
+    int tempId = ids[a];
+    int tempUnidadesIds = unidadeIds[a];
+    int tempMeses = meses[a];
+    int tempAnos = anos[a];
+    float tempConsumos = consumos[a];
+
+    ids[a] = ids[b];
+    ids[b] = tempId;
+
+    unidadeIds[a] = unidadeIds[b];
+    unidadeIds[b] = tempUnidadesIds;
+
+    meses[a] = meses[b];
+    meses[b] = tempMeses;
+
+    anos[a] = anos[b];
+    anos[b] = tempAnos;
+
+    consumos[a] = consumos[b];
+    consumos[b] = tempConsumos;
+}
+
+int main() {
+    char arquivo_leitura[] = "leituras.txt";
+    char arquivo_unidades[] = "unidades.csv";
+
+    // dados das unidades, acessar com i
+    int unidadeIdsCatalogo[MAX];
+    char descricoes[MAX][50];
+
+    // dados de consumo, acessar com j
+    int ids[MAX];
+    int unidadeIds[MAX];
+    int meses[MAX];
+    int anos[MAX];
+    float consumos[MAX];
+
+    int totalUnidades = carregarUnidades(arquivo_unidades, unidadeIdsCatalogo, descricoes, MAX);
+
+    if (totalUnidades == -1) {
+        printf("Erro ao abrir o arquivo unidades.csv.\nEncerrando o programa.\n");
+        return 1;
+    }
+
+    int totalLeituras =
+        carregarLeituras(arquivo_leitura, ids, unidadeIds, meses, anos, consumos, MAX);
+
+    if (totalLeituras == -1) {
+        printf("Erro ao abrir o arquivo leituras.txt.\nEncerrando o programa.\n");
+        return 1;
+    }
+
+    // bubbleSortLeituraPorId(ids, unidadeIds, meses, anos, consumos, totalLeituras);
+    // selectionSortLeituraPorId(ids, unidadeIds, meses, anos, consumos, totalLeituras);
+    // insertionSortLeituraPorId(ids, unidadeIds, meses, anos, consumos, totalLeituras);
+
+    return 0;
+}
