@@ -1,0 +1,40 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug main (CodeLLDB)",
+            "program": "${workspaceFolder}/main",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "build main (debug)",
+            "preRunCommands": [
+                "target stop-hook add -n selectionSortLeituraPorId -o 'frame variable i j min' -o 'p ids[j]' -o 'p ids[min]' -o 'p ids[j] < ids[min]'"
+            ]
+        },
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "enter program name, for example ${workspaceFolder}/a.out",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
