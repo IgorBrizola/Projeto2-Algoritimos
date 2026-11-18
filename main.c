@@ -3,51 +3,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "main.h"
+
 #define MAX 1000
-
-int carregarUnidades(const char nomeArquivo[], int unidadeIds[], char descricoes[][50], int max);
-
-int carregarLeituras(const char nomeArquivo[], int ids[], int unidadeIds[], int meses[], int anos[],
-                     float consumos[], int max);
-
-int buscaLinear(int ids[], int n, int idProcurado);
-
-int buscaBinaria(int ids[], int n, int idProcurado);
-
-void bubbleSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
-                            int n);
-
-void insertionSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[],
-                               float consumos[], int n);
-
-void selectionSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[],
-                               float consumos[], int n);
-
-int particionarLeituras(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
-                        int inicio, int fim);
-
-void quickSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
-                           int inicio, int fim);
-
-void intercalarLeituras(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
-                        int inicio, int meio, int fim);
-
-void mergeSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
-                           int inicio, int fim);
-
-float calcularConsumoUnidade(int unidadeIds[], float consumos[], int n, int unidadeId);
-
-float calcularConsumoPeriodo(int meses[], int anos[], float consumos[], int n, int mesInicial,
-                             int anoInicial, int mesFinal, int anoFinal);
-
-int encontrarUnidadeMaiorConsumo(int unidadeIds[], float consumos[], int n);
-
-void trocarItensLeitura(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
-                        int a, int b);
-
-void limparEntrada();
-
-int lerInteiro();
 
 int carregarUnidades(const char nomeArquivo[], int unidadeIds[], char descricoes[][50], int max) {
 
@@ -91,7 +49,8 @@ int carregarLeituras(const char nomeArquivo[], int ids[], int unidadeIds[], int 
 }
 
 int buscaLinear(int ids[], int n, int idProcurado) {
-    for (int i = 0; i < n; i++) {
+    int i;
+    for (i = 0; i < n; i++) {
         if (ids[i] == idProcurado) {
             return i;
         }
@@ -121,10 +80,12 @@ int buscaBinaria(int ids[], int n, int idProcurado) {
 
 void bubbleSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
                             int n) {
+    int i;
+    int j;
 
-    for (int i = 1; i < n; i++) {
+    for (i = 1; i < n; i++) {
         bool ordenado = true;
-        for (int j = 0; j < n - i; j++) {
+        for (j = 0; j < n - i; j++) {
             if (ids[j] > ids[j + 1]) {
                 trocarItensLeitura(ids, unidadeIds, meses, anos, consumos, j, j + 1);
                 ordenado = false;
@@ -139,10 +100,12 @@ void bubbleSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[]
 
 void selectionSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[],
                                float consumos[], int n) {
+    int i;
+    int j;
 
-    for (int i = 0; i < n - 1; i++) {
+    for (i = 0; i < n - 1; i++) {
         int min = i;
-        for (int j = i + 1; j < n; j++) {
+        for (j = i + 1; j < n; j++) {
             if (ids[j] < ids[min]) {
                 min = j;
             }
@@ -155,8 +118,9 @@ void selectionSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int ano
 
 void insertionSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[],
                                float consumos[], int n) {
+    int i;
 
-    for (int i = 1; i < n; i++) {
+    for (i = 1; i < n; i++) {
 
         int elementoId = ids[i];
         int elementoUnidade = unidadeIds[i];
@@ -185,11 +149,12 @@ void insertionSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int ano
 
 int particionarLeituras(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
                         int inicio, int fim) {
+    int j;
 
     int pivo = ids[fim];
     int i = inicio - 1;
 
-    for (int j = inicio; j < fim; j++) {
+    for (j = inicio; j < fim; j++) {
         if (ids[j] < pivo) {
             i++;
             trocarItensLeitura(ids, unidadeIds, meses, anos, consumos, i, j);
@@ -214,6 +179,7 @@ void quickSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[],
 
 void intercalarLeituras(int ids[], int unidadeIds[], int meses[], int anos[], float consumos[],
                         int inicio, int meio, int fim) {
+    int t;
 
     int auxIds[MAX];
     int auxUnidadeIds[MAX];
@@ -264,7 +230,7 @@ void intercalarLeituras(int ids[], int unidadeIds[], int meses[], int anos[], fl
         k++;
     }
 
-    for (int t = 0; t < k; t++) {
+    for (t = 0; t < k; t++) {
         ids[inicio + t] = auxIds[t];
         unidadeIds[inicio + t] = auxUnidadeIds[t];
         meses[inicio + t] = auxMeses[t];
@@ -286,10 +252,11 @@ void mergeSortLeituraPorId(int ids[], int unidadeIds[], int meses[], int anos[],
 }
 
 float calcularConsumoUnidade(int unidadeIds[], float consumos[], int n, int unidadeId) {
+    int i;
 
     float total = 0;
 
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         if (unidadeIds[i] == unidadeId) {
             total = total + consumos[i];
         }
@@ -300,12 +267,13 @@ float calcularConsumoUnidade(int unidadeIds[], float consumos[], int n, int unid
 
 float calcularConsumoPeriodo(int meses[], int anos[], float consumos[], int n, int mesInicial,
                              int anoInicial, int mesFinal, int anoFinal) {
+    int i;
 
     float total = 0;
     int inicio = anoInicial * 12 + mesInicial;
     int fim = anoFinal * 12 + mesFinal;
 
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         int data = anos[i] * 12 + meses[i];
         if (data >= inicio && data <= fim) {
             total = total + consumos[i];
@@ -316,11 +284,12 @@ float calcularConsumoPeriodo(int meses[], int anos[], float consumos[], int n, i
 }
 
 int encontrarUnidadeMaiorConsumo(int unidadeIds[], float consumos[], int n) {
+    int i;
 
     int idMaior = -1;
     float maior = -1;
 
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         float total = calcularConsumoUnidade(unidadeIds, consumos, n, unidadeIds[i]);
         if (total > maior || (total == maior && unidadeIds[i] < idMaior)) {
             maior = total;
@@ -372,6 +341,7 @@ int lerInteiro() {
 }
 
 int main() {
+    int i;
     char arquivoLeituras[] = "leituras.txt";
     char arquivoUnidades[] = "unidades.csv";
 
@@ -462,7 +432,7 @@ int main() {
                 printf("Leituras ordenadas por ID:\n");
                 printf("ID | Unidade | Descricao                  | Mes | Ano  | Consumo (kWh)\n");
                 printf("-----------------------------------------------------------------------\n");
-                for (int i = 0; i < totalLeituras; i++) {
+                for (i = 0; i < totalLeituras; i++) {
                     int k = buscaLinear(unidadeIdsCatalogo, totalUnidades, unidadeIds[i]);
                     printf("%-2d | %-7d | %-26s | %-3d | %-4d | %.2f\n", ids[i], unidadeIds[i],
                            descricoes[k], meses[i], anos[i], consumos[i]);
